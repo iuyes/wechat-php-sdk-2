@@ -1465,7 +1465,7 @@ class Wechat
 	 * @param  array $menuArr
 	 * @return mixed
 	 */
-	public function createMenu($accessToken){
+	public function getMenu($accessToken){
 		
 		if(empty($accessToken)){
 			throw new \Exception(ErrorCode::info('40035'));
@@ -1603,7 +1603,7 @@ class Wechat
 	 * @param  string $toGroupId
 	 * @return mixed
 	 */
-	public function updateGroup($accessToken, $openId, $toGroupId){
+	public function updateMember($accessToken, $openId, $toGroupId){
 		if(empty($accessToken) || empty($openId) || empty($toGroupId)){
 			throw new \Exception(ErrorCode::info('40035'));
 		}
@@ -1629,7 +1629,7 @@ class Wechat
 	 * @param  string $toGroupId
 	 * @return mixed
 	 */
-	public function updateGroup($accessToken, $openIdArr, $toGroupId){
+	public function batchUpateMembers($accessToken, $openIdArr, $toGroupId){
 		if(empty($accessToken) || empty($openIdArr) || empty($toGroupId)){
 			throw new \Exception(ErrorCode::info('40035'));
 		}
