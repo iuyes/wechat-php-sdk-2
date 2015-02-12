@@ -1,0 +1,23 @@
+{
+    "name": "mervyn/wechatSDK",
+    "description": "wechat sdk for php",
+    "keywords": [
+        "wechat"
+    ],
+    "authors": [
+        {
+            "name": "Mervyn",
+            "email": "404245127@qq.com",
+            "homepage": "https://github.com/Mervyn1205"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "openlss/lib-array2xml": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "WechatSDK": ""
+        }
+    }
+}
