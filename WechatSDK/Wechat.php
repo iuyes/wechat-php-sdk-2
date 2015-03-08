@@ -199,8 +199,10 @@ class Wechat
 		}
 
 		$eventType = $this->getEvent();
-		if($eventType == self::EVENT_SUBSCRIBE && isset($this->_data['EventKey'])){
-			$eventType = self::EVENT_SCAN_SUBSCRIBE;
+		if($eventType == self::EVENT_SUBSCRIBE){
+			if(isset($this->_data['EventKey']) && !empty($this->_data['EventKey']['@cdata'])){
+				$eventType = self::EVENT_SCAN_SUBSCRIBE;
+			}
 		}
 
 		return $eventType;
