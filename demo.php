@@ -9,7 +9,8 @@ $options = array(
 	'appsecret' => 'xxx'
 );
 $openId = isset($_GET['openid']) ? $_GET['openid'] : "oxt_8jg-cIh-Tv0fvv7yOep_GHEg";
-$wechatObj = new WechatSubscribe($options);
+$wechatObj = new Wechat($options);
+$wechatObj->checkAndInit();
 
 //获取access_token
 $accessToken = array (
