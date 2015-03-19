@@ -84,14 +84,12 @@ class Wechat
 		}
 
 		$this->_debug = isset($options['debug']) ? $options['debug'] : false;
-
-		$this->_init();
 	}
 
 	/**
 	 * 验证合法性并初始化数据
 	 */
-	protected function _init()
+	public function checkAndInit()
 	{
 		//判断是否为第一次接入
 		if(isset($_GET["echostr"]) && $this->checkSignature()){
