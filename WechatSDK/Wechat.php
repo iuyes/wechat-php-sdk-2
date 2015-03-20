@@ -81,13 +81,7 @@ class Wechat
 	/**
 	 * 验证合法性并初始化数据
 	 */
-	public function checkAndInit()
-	{
-		//判断是否为第一次接入
-		if(isset($_GET["echostr"]) && $this->checkSignature()){
-			echo $_GET['echostr'];exit;
-		}
-
+	public function checkAndInit() {
 		if ($_SERVER['REQUEST_METHOD'] == "POST") {
 			$postStr = file_get_contents("php://input");
 			
@@ -112,6 +106,8 @@ class Wechat
 
 			$this->_data = XML2Array::createArray($postStr);
 			$this->_data = $this->_data['xml'];
+		} else {
+			die('');
 		}
 	}
 
@@ -120,8 +116,7 @@ class Wechat
 	 * @param  string $msgEncrypt
 	 * @return boolean
 	 */
-	protected function checkSignature($msgEncrypt = '')
-	{
+	public function checkSignature($msgEncrypt = '') {
 		$signature = isset($_GET["signature"]) ? $_GET["signature"] : '';
 		$signature = isset($_GET["msg_signature"]) ? $_GET["msg_signature"] : $signature; //如果存在加密验证则用加密验证段
 		$timestamp = $_GET["timestamp"];
