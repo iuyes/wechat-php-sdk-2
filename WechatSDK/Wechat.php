@@ -64,12 +64,12 @@ class Wechat
 	 */
 	public function __construct($options = array()){
 		$this->_appid = isset($options['appid']) ? $options['appid'] : '';
-		if (empty($this->_encodingaeskey)) {
+		if (empty($this->_appid)) {
 			throw new \Exception(ErrorCode::info('20003'));
 		}
 
 		$this->_appsecret = isset($options['appsecret']) ? $options['appsecret'] : '';
-		if (empty($this->_encodingaeskey)) {
+		if (empty($this->_appsecret)) {
 			throw new \Exception(ErrorCode::info('20004'));
 		}
 		
