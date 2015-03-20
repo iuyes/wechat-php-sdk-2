@@ -63,16 +63,6 @@ class Wechat
 	 * @param array $options 相关配置项
 	 */
 	public function __construct($options = array()){
-		$this->_token = isset($options['token']) ? $options['token'] : '';
-		if (empty($this->_token)) {
-			throw new \Exception(ErrorCode::info('20001'));
-		}
-
-		$this->_encodingaeskey = isset($options['encodingaeskey']) ? $options['encodingaeskey'] : '';
-		if (empty($this->_encodingaeskey)) {
-			throw new \Exception(ErrorCode::info('20002'));
-		}
-
 		$this->_appid = isset($options['appid']) ? $options['appid'] : '';
 		if (empty($this->_encodingaeskey)) {
 			throw new \Exception(ErrorCode::info('20003'));
@@ -82,7 +72,9 @@ class Wechat
 		if (empty($this->_encodingaeskey)) {
 			throw new \Exception(ErrorCode::info('20004'));
 		}
-
+		
+		$this->_token = isset($options['token']) ? $options['token'] : '';
+		$this->_encodingaeskey = isset($options['encodingaeskey']) ? $options['encodingaeskey'] : '';
 		$this->_debug = isset($options['debug']) ? $options['debug'] : false;
 	}
 
