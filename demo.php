@@ -17,50 +17,50 @@ if(isset($_GET["echostr"]) && $wechatObj->checkSignature()){
 $wechatObj->checkAndInit();
 
 //获取access_token
-$accessToken = array (
-	'access_token' => 'adhohuQIbN3d5CNx6wKU6mhgPL2SBraLFYgP5um2pbYMvDI93b7VgL2pcHWPDHB2s_8PdMMZg-37s9hHiKIKdXZFadCRMGVZG9yinEMp6Dc',
-	'expires_in' => 7200
-);
-// $accessToken = $wechatObj->getAccessToken();
-// $accessToken = json_decode($accessToken, true);
-// var_export($accessToken);
-$accessToken = $accessToken['access_token'];
+// $accessTokenJson = $wechatObj->getAccessToken();
+// $accessTokenArr = json_decode($accessTokenJson, true);
+// $accessToken = $accessTokenArr['access_token'];
 
 //获取微信服务器IP地址
-/*
-$access = array (
-	'access_token' => 'pDMjaLlVwrWWGYU3fb-_IoFuNAlxfWELd57OkXpv3M-HR8GZbkR1XjTnSnJ8sPtKsv1AvLqDUs9dal02jC4pMLNXuCW236JzB1Chh_op6Yk',
-	'expires_in' => 7200,
-);
-$ipList = $wechatObj->getIpList($access['access_token']);
-*/
+// $ipList = $wechatObj->getIpList($accessToken);
 
 // 上传多媒体
-/*
-$filePath = '/tmp/1.jpg';
-$result = $wechatObj->upload($accessToken, 'image', $filePath);
-*/
-$mediaId = 'xx-xx';
+
+// $filePath = '/tmp/1.jpg';
+// $result = $wechatObj->upload($accessToken, 'image', $filePath);
+
+//新增永久素材（非图文）
+//$filePath = '/tmp/1.jpg';
+// $result = $wechatObj->addMaterial($accessToken, 'image', $filePath);
 
 //下载多媒体
-/*
-$result = $wechatObj->download($accessToken, $mediaId, '/tmp/11.jpg');
-var_export($result);
-*/
+// $filePath = '/tmp/1.jpg';
+// $mediaId = xxx;
+// $result = $wechatObj->download($accessToken, $mediaId, $filePath);
+
+//获取永久素材
+//$mediaId = xxx;
+//$destination = 'xxx';
+//$wechatObj->getMaterial($accessToken, $mediaId, $destination);
+
+//删除永久素材
+//$mediaId = xxx;
+//$wechatObj->delMaterial($accessToken, $mediaId);
+
+//获取永久素材总数
+//$mediaId = xxx;
+//$wechatObj->getMaterialCount($accessToken, $mediaId);
+
+//获取永久素材总数
+//$result = $wechatObj->getMaterialList($accessToken, 'image');
+
 
 // 发送文本客服消息
-
-/*
-$content = "测试发送文本";
-$result = $wechatObj->sendText($accessToken, $openId, $content);
-var_export($result);
-*/
+// $content = "测试发送文本";
+// $result = $wechatObj->sendText($accessToken, $openId, $content);
 
 // 发送客服消息(图片)
-
-$result = $wechatObj->sendImg($accessToken, $openId, $mediaId);
-var_export($result);
-
+// $result = $wechatObj->sendImg($accessToken, $openId, $mediaId);
 
 //发送客服消息(图文)
 /*
@@ -79,10 +79,8 @@ $articleArr = array(
 	),
 );
 $result = $wechatObj->sendNews($accessToken, $openId, $articleArr);
-var_dump($result);
 */
 
 //添加客服账号
 // $result = $wechatObj->addKf($accessToken, 'mer@gh_089fa58ad5d9', 'merssss', 'sfdsfsdf');
-// var_export($result);
 

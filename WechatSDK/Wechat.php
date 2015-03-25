@@ -416,7 +416,7 @@ class Wechat
 	}
 
 	/**
-	 * 上传多媒体文件
+	 * 新增临时素材(原上传多媒体文件接口）
 	 * @param string $accessToken
 	 * @param string $type 媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb）
 	 * @param string $filepath 文件的绝对路径
@@ -432,7 +432,7 @@ class Wechat
 	}
 
 	/**
-	 * 下载多媒体
+	 * 获取临时素材（原下载多媒体接口）
 	 * @param  string $accessToken
 	 * @param  string $mediaId 媒体文件上传后，获取时的唯一标识
 	 * @param  string $destination 下载文件放置的地址（绝对路径）
@@ -443,18 +443,96 @@ class Wechat
 		}
 
 		$url = $this->_fileUrl . "/media/get?access_token={$accessToken}&media_id={$mediaId}";
-		$handle = fopen($destination, 'w');
+		return $this->httpDownload($url, $destination, false);
+	}
 
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_FILE, $handle);
-		$output = curl_exec($ch);
-		if(!$output || !curl_errno($ch) == 0){
-			$this->err = curl_error($ch);
+	/**
+	 * 新增永久素材（除图文素材外）
+	 * @param string $accessToken
+	 * @param string $type        媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb）
+	 * @param string $filepath    文件的绝对路径
+	 * @param array $options      额外参数
+	 *  ps:如果type为视频（video)则需要$options数组中需要有title(视频素材的标题)和introduction(视频素材的描述)
+	 * @return mixed
+	 */
+	public function addMaterial($accessToken, $type, $filepath, $options = array()){
+		if(empty($accessToken) || empty($type) || empty($filepath)){
+			throw new \Exception(ErrorCode::info('40035'));
+		}
+		if($type == 'video'){
+			if(!is_array($options) || !isset($options['title']) || !isset($options['introduction'])){
+				throw new \Exception(ErrorCode::info('40035'));
+			}
+			$post['title'] = $options['title'];
+			$post['introduction'] = $options['introduction'];
+		}
+		$url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$accessToken}";
+		$post['media'] = '@'.$filepath;
+		return $this->httpRequest($url, false, $post);
+	}
+
+	/**
+	 * 获取永久素材
+	 * @param  string $accessToken
+	 * @param  string $mediaId 媒体文件上传后，获取时的唯一标识
+	 * @param  string $destination 下载文件放置的地址（非必传，如果不传此参数则直接返回）
+	 */
+	public function getMaterial($accessToken, $mediaId, $destination = ''){
+		if(empty($accessToken) || empty($mediaId)){
+			throw new \Exception(ErrorCode::info('40035'));
 		}
 
-		curl_close($ch);
-		return $output;
+		$url = "https://api.weixin.qq.com/cgi-bin/material/get_material?access_token={$accessToken}";
+		$post = json_encode(array('media_id' => $mediaId));
+		if(empty($destination)){
+			return $this->httpRequest($url, true, $post);
+		}
+		return $this->httpDownload($url, $destination, true, $post);
+	}
+
+	/**
+	 * 删除永久素材
+	 * @param  string $accessToken
+	 * @param  string $mediaId 媒体文件上传后，获取时的唯一标识
+	 */
+	public function delMaterial($accessToken, $mediaId){
+		if(empty($accessToken) || empty($mediaId)){
+			throw new \Exception(ErrorCode::info('40035'));
+		}
+
+		$url = "https://api.weixin.qq.com/cgi-bin/material/del_material?access_token={$accessToken}";
+		$post = json_encode(array('media_id' => $mediaId));
+		return $this->httpRequest($url, true, $post);
+	}
+
+	/**
+	 * 获取永久素材总数
+	 * @param  string $accessToken
+	 */
+	public function getMaterialCount($accessToken){
+		if(empty($accessToken)){
+			throw new \Exception(ErrorCode::info('40035'));
+		}
+
+		$url = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token={$accessToken}";
+		return $this->httpRequest($url);
+	}
+
+	/**
+	 * 获取永久素材列表
+	 * @param string $accessToken
+	 * @param string      素材的类型，图片（image）、视频（video）、语音 （voice）、图文（news）
+	 * @param int $offset 从全部素材的该偏移位置开始返回，0表示从第一个素材返回
+	 * @param int $count  返回素材的数量，取值在1到20之间
+	 */
+	public function getMaterialList($accessToken, $type, $offset = 0, $count = 20){
+		if(empty($accessToken) || empty($type) || $count > 20 || $count < 1){
+			throw new \Exception(ErrorCode::info('40035'));
+		}
+
+		$url = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={$accessToken}";
+		$post = json_encode(array('type' => $type, 'offset' => $offset, 'count' => $count));
+		return $this->httpRequest($url, true, $post);
 	}
 
 	/**
@@ -1735,5 +1813,41 @@ class Wechat
 		curl_close($ch);
 		return $output;
 	}
-	
+
+	/**
+	 * 发送http请求下载文件
+	 * @param string  $url
+	 * @param string  $destination 文件保存路径
+	 * @param boolean $isHttps     是否https连接
+	 * @param string  $post	       POST请求的参数
+	 */
+	public function httpDownload($url, $destination, $isHttps = true, $post = ''){
+		if(empty($url)){
+			throw new \Exception(ErrorCode::info('40035'));
+		}
+
+		$handle = fopen($destination, 'w');
+		$ch = curl_init();
+		if($isHttps){
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($ch, CURLOPT_SSLVERSION, 1);
+		}
+
+		if(!empty($post)){
+			curl_setopt($ch, CURLOPT_POST,true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS,$post);
+		}
+
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_FILE, $handle);
+		
+		$output = curl_exec($ch);
+		if(!$output || !curl_errno($ch) == 0){
+			$this->err = curl_error($ch);
+		}
+
+		curl_close($ch);
+		return $output;
+	}
 }
